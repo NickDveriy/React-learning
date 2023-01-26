@@ -1,36 +1,45 @@
 import styles from "./AvailableMeals.module.css";
 import Card from "../UI/Card";
 import MealItem from "./MealItem/MealItem";
-
-const DUMMY_MEALS = [
-  {
-    id: "m1",
-    name: "Sushi",
-    description: "Finest fish and veggies",
-    price: 22.99,
-  },
-  {
-    id: "m2",
-    name: "Schnitzel",
-    description: "A german specialty!",
-    price: 16.5,
-  },
-  {
-    id: "m3",
-    name: "Barbecue Burger",
-    description: "American, raw, meaty",
-    price: 12.99,
-  },
-  {
-    id: "m4",
-    name: "Green Bowl",
-    description: "Healthy...and green...",
-    price: 18.99,
-  },
-];
+import { useEffect, useState } from "react";
 
 const AvailableMeals = () => {
-  const mealsList = DUMMY_MEALS.map((meal) => {
+  const [meals, setMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchMeals = async () => {
+      const response = await fetch(
+        "https://react-http-36b3a-default-rtdb.europe-west1.firebasedatabase.app/meals.json"
+      );
+
+      console.log("resp", response);
+
+      if (!response.ok) {
+        throw new Error("Request failed!");
+      }
+      const data = await response.json();
+      const loadedMeals = [];
+      for (const key in data) {
+        loadedMeals.push({
+          id: key,
+          name: data[key].name,
+          description: data[key].description,
+          price: data[key].price,
+        });
+      }
+
+      setMeals(loadedMeals);
+      setIsLoading(false);
+    };
+
+    fetchMeals().catch((err) => {
+      setIsLoading(false);
+      setError(err.message);
+    });
+  }, []);
+
+  const mealsList = meals.map((meal) => {
     return (
       <MealItem
         id={meal.id}
@@ -47,7 +56,15 @@ const AvailableMeals = () => {
   return (
     <section className={styles.meals}>
       <Card>
-        <ul>{mealsList}</ul>
+        {!isLoading && !error && <ul>{mealsList}</ul>}
+        {isLoading && !error && (
+          <p className={styles["meals-loading"]}>Loading data...</p>
+        )}
+        {error && (
+          <p className={styles["meals-loading-error"]}>
+            An error occurred: {error}
+          </p>
+        )}
       </Card>
     </section>
   );
