@@ -23,13 +23,14 @@ function HomePage(props) {
   return <MeetupList meetups={props.meetups} />;
 }
 
-//executed on build phase only
+//executed on build phase only before page is even prerendered
 export async function getStaticProps() {
   // fetch data from API
   return {
     props: {
       meetups: DUMMY_MEETUPS,
     }, // props object passed into page component
+    revalidate: 10, // number of seconds NextJS will wait until it regenerates this page (for incremental static generation)
   };
 }
 
