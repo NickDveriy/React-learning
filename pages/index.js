@@ -23,6 +23,16 @@ function HomePage(props) {
   return <MeetupList meetups={props.meetups} />;
 }
 
+// runs for every incoming server request (better for frequently changed data)
+// export async function getServerSideProps(context) {
+//   // const req = context.req;
+//   // const res = context.res;
+
+//   return {
+//     props: { meetups: DUMMY_MEETUPS },
+//   };
+// }
+
 //executed on build phase only before page is even prerendered
 export async function getStaticProps() {
   // fetch data from API
