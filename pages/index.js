@@ -1,26 +1,21 @@
+import { MongoClient } from "mongodb";
+import Head from "next/head";
+
 import MeetupList from "../components/meetups/MeetupList";
 
-const DUMMY_MEETUPS = [
-  {
-    id: "m1",
-    title: "First meetup",
-    image:
-      "https://www.fluentin3months.com/wp-content/uploads/2021/09/language-meetup.jpg",
-    address: "Some address",
-    description: "Some first description",
-  },
-  {
-    id: "m2",
-    title: "Second meetup",
-    image:
-      "https://www.fluentin3months.com/wp-content/uploads/2021/09/language-meetup.jpg",
-    address: "Some second address",
-    description: "Some second description",
-  },
-];
-
 function HomePage(props) {
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <>
+      <Head>
+        <title>React meetups</title>
+        <meta
+          name="description"
+          content="List of all amazing meetups available"
+        />
+      </Head>
+      <MeetupList meetups={props.meetups} />
+    </>
+  );
 }
 
 // runs for every incoming server request (better for frequently changed data)
@@ -36,11 +31,28 @@ function HomePage(props) {
 //executed on build phase only before page is even prerendered
 export async function getStaticProps() {
   // fetch data from API
+
+  const mongoClient = await MongoClient.connect(
+    "mongodb+srv://nickDV:HnOr1kCdek0oXavM@cluster0.hywt40l.mongodb.net/reactDb?retryWrites=true&w=majority"
+  );
+  const db = mongoClient.db();
+  console.log("afawef");
+
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find({}).toArray();
+
+  console.log("dddd", meetups);
+
+  mongoClient.close();
+
   return {
     props: {
-      meetups: DUMMY_MEETUPS,
+      meetups: meetups.map((item) => {
+        return { ...item, _id: null, id: item._id.toString() };
+      }),
     }, // props object passed into page component
-    revalidate: 10, // number of seconds NextJS will wait until it regenerates this page (for incremental static generation)
+    revalidate: 60, // number of seconds NextJS will wait until it regenerates this page (for incremental static generation)
   };
 }
 
