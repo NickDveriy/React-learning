@@ -70,7 +70,7 @@ export async function getStaticPaths() {
   });
 
   return {
-    fallback: false, // indicate that all supported paths for this page are defined here in paths array
+    fallback: false, // indicate that all supported paths for this page are defined here in paths array, could be also true or 'blocking'
     paths: supportPathes,
   };
 }
