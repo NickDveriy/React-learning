@@ -9,8 +9,6 @@ const animationTiming = {
 };
 
 const modal = (props) => {
-  console.log(props.show);
-
   return (
     <Transition
       in={props.show}
