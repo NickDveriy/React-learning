@@ -6,6 +6,7 @@ let globalState = {};
 let listeners = [];
 let actions = {};
 
+// shouldListen - flag for a little optimization of rerendering to avoid unnecessary rendering of all items on change of isFavorite prop of single item
 export const useStore = (shouldListen = true) => {
   const setState = useState(globalState)[1];
 
