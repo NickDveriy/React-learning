@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Transition from "react-transition-group/Transition";
 
 import "./App.css";
 import Modal from "./components/Modal/Modal";
@@ -52,16 +51,8 @@ class App extends Component {
             ></div>
           )}
         </Transtion> */}
-        <Transition
-          in={this.state.modalIsOpen}
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-        >
-          {(state) => {
-            return <Modal show={state} closed={this.toggleModal} />;
-          }}
-        </Transition>
+
+        <Modal show={this.state.modalIsOpen} closed={this.toggleModal} />
         {this.state.modalIsOpen ? (
           <Backdrop show closed={this.toggleModal} />
         ) : null}
